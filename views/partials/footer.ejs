@@ -71,19 +71,23 @@
   $(document).ready(() => {
 
     $.getJSON("https://ipgeolocation.abstractapi.com/v1/?api_key=d9a8215b4a5c4f1a97c916038223c300", function(data) {
-      console.log(data);
+
+      let ipData = data
+      $.ajax({
+        url: "/saveip",
+        method: "POST",
+        dataType: "json",
+        data: {
+          ip: ipData.ip_address,
+          ipData: JSON.stringify(ipData)
+        },
+        success:(res)=>{
+          console.log(res);
+        }
+      });
+
     })
 
-
-
-
-    // $.ajax({
-    //   url: "/saveip",
-    //   method: "POST",
-    //   success: (res) => {
-    //     // alert(res)
-    //   }
-    // });
   })
 </script>
 
