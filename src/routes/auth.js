@@ -9,8 +9,9 @@ const session = require("express-session");
 const multer = require("multer");
 const moment = require("moment");
 const IP = require("ip");
-const followers = require("instagram-followers");
-const instagram = require("basic-instagram-user-details");
+const reqIp = require("request-ip");
+const axios = require("axios");
+
 dotenv.config({ path: "./.env" });
 route.use(cookieParser());
 
@@ -35,7 +36,10 @@ route.get("/", async (req, res) => {
   try {
     let serviceCount = await allServices.count();
     let homeServiceData = await allServices.find({ homeService: "on" });
-    res.render("home", { homeServiceData: homeServiceData,serviceCount:serviceCount });
+    res.render("home", {
+      homeServiceData: homeServiceData,
+      serviceCount: serviceCount,
+    });
   } catch (err) {
     console.log(err);
   }
@@ -203,10 +207,9 @@ route.get("/admin", async (req, res) => {
       }
       let weekDaysProfit = 0;
       for (k = 0; k < dayProfitArray.length; k++) {
-        weekDaysProfit += parseInt(dayProfitArray[k])
+        weekDaysProfit += parseInt(dayProfitArray[k]);
       }
-      weekProfit.push(weekDaysProfit)
-
+      weekProfit.push(weekDaysProfit);
     }
 
     res.render("dashboard", {
@@ -215,9 +218,9 @@ route.get("/admin", async (req, res) => {
       totalTrafic: totalTrafic,
       cuMonTotal: cuMonTotal,
       profit: profit,
-      weekDays:weekDays.reverse(),
+      weekDays: weekDays.reverse(),
       // weekDates:weekDates.reverse(),
-      weekProfit:weekProfit.reverse(),
+      weekProfit: weekProfit.reverse(),
     });
   } catch (err) {
     console.log(err);
@@ -459,29 +462,38 @@ route.post("/editservicehighlight", async (req, res) => {
 
 route.post("/saveip", async (req, res) => {
   try {
-    let ip = IP.address();
-    let checkIp = await custIp.findOne({ ip });
-    let cDate = moment();
+    axios
+      .get(
+        "https://ipgeolocation.abstractapi.com/v1/?api_key=d9a8215b4a5c4f1a97c916038223c300"
+      )
+      .then(async (response) => {
 
-    
+        let ipData = response.data;
+        let ip = ipData.ip_address;
 
-    if (checkIp) {
-      let findIp = await custIp.findOne({ ip }).sort({ _id: -1 }).limit(1);
+        let checkIp = await custIp.findOne({ ip });
+        let cDate = moment();
 
-      let exDate = findIp.date;
+        if (checkIp) {
+          let findIp = await custIp.findOne({ ip }).sort({ _id: -1 }).limit(1);
 
-      let diff = cDate.diff(exDate, "minutes");
-      if (diff > 59) {
-        await custIp.insertMany({ ip, date: cDate });
-      } else {
-        console.log("already added");
-      }
-    } else {
-      await custIp.insertMany({ ip, date: cDate });
-    }
+          let exDate = findIp.date;
 
-    res.send(ip);
-    
+          let diff = cDate.diff(exDate, "minutes");
+          if (diff > 59) {
+            await custIp.insertMany({ ip, date: cDate ,ipData});
+          } else {
+            console.log("already added");
+          }
+        } else {
+          await custIp.insertMany({ ip, date: cDate,ipData });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    // res.send(ip);
   } catch (err) {
     console.log(err);
   }
