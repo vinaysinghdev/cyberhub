@@ -467,29 +467,27 @@ route.post("/saveip", async (req, res) => {
         "https://ipgeolocation.abstractapi.com/v1/?api_key=d9a8215b4a5c4f1a97c916038223c300"
       )
       .then(async (response) => {
-
         let ipData = response.data;
         let ip = ipData.ip_address;
+        console.log(ipData);
 
-        let checkIp = await custIp.findOne({ ip });
+        let checkIp = await custIp.findOne({ip});
         let cDate = moment();
 
         if (checkIp) {
           let findIp = await custIp.findOne({ ip }).sort({ _id: -1 }).limit(1);
-
           let exDate = findIp.date;
-
           let diff = cDate.diff(exDate, "minutes");
           if (diff > 59) {
-            await custIp.insertMany({ ip, date: cDate ,ipData});
+            await custIp.insertMany({ ip, date: cDate, ipData });
           } else {
             console.log("already added");
           }
         } else {
-          await custIp.insertMany({ ip, date: cDate,ipData });
+          await custIp.insertMany({ ip, date: cDate, ipData });
         }
-
         res.send(ip);
+
       })
       .catch((error) => {
         console.log(error);
