@@ -36,6 +36,7 @@ route.get("/", async (req, res) => {
   try {
     let serviceCount = await allServices.count();
     let homeServiceData = await allServices.find({ homeService: "on" });
+
     res.render("home", {
       homeServiceData: homeServiceData,
       serviceCount: serviceCount,
@@ -465,6 +466,8 @@ route.post("/saveip", async (req, res) => {
   try {
     let ip = req.body.ip;
     let ipData = JSON.parse(req.body.ipData);
+    let time = moment().format("hh:mm:ss");
+
 
     let checkIp = await custIp.findOne({ ip });
     let cDate = moment();
@@ -476,7 +479,7 @@ route.post("/saveip", async (req, res) => {
       let exDate = findIp.date;
       let diff = cDate.diff(exDate, "minutes");
       if (diff > 59) {
-        await custIp.insertMany({ ip, date: cDate, ipData });
+        await custIp.insertMany({ ip, date: cDate, ipData, time });
         console.log("New Added");
         res.send("New Added");
       } else {
@@ -484,7 +487,7 @@ route.post("/saveip", async (req, res) => {
         res.send("already added");
       }
     } else {
-      await custIp.insertMany({ ip, date: cDate, ipData });
+      await custIp.insertMany({ ip, date: cDate, ipData , time });
       res.send("New Added");
     }
   } catch (err) {

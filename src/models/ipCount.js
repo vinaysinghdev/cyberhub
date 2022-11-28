@@ -7,6 +7,9 @@ const custIp = mongoose.Schema({
   date: {
     type: String,
   },
+  time: {
+    type: String,
+  },
   ipData: {
     type: JSON,
   },
