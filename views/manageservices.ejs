@@ -20,9 +20,23 @@
   <!-- CSS Files -->
   <link id="pagestyle" href="css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
 
+  <!-- pagination -->
   <script src="js/pagination.js"></script>
   <link href="css/pagination.css" rel="stylesheet" />
 
+  <!-- alert cdn -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+  <script>
+    function preventBack() {
+      window.history.forward();
+    }
+    setTimeout("preventBack()", 0);
+    window.onunload = function() {
+      null
+    };
+  </script>
 
 </head>
 
@@ -398,6 +412,9 @@
   </div>
 
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
   <script>
     function checkform() {
 
@@ -407,18 +424,30 @@
       let file = document.getElementById('imgInp').value;
 
       if (!title || !desc || !file) {
-        alert('please Fill all the field')
+        iziToast.warning({
+          title: 'ERROR',
+          message: 'please Fill all the field !',
+        });
         return;
       }
       if (!index) {
-        alert('please Enter number in index fill')
+        iziToast.warning({
+          title: 'ERROR',
+          message: 'please Enter number in index fill !',
+        });
         return;
       }
       if (desc.length < 45) {
-        alert('Min 45 Charater allowed')
+        iziToast.warning({
+          title: 'ERROR',
+          message: 'Min 45 Charater allowed !',
+        });
         return;
       }
-      alert('ok')
+      iziToast.success({
+        title: 'OK',
+        message: 'Service Added Successfully  !',
+      });
       setTimeout(() => {
         document.getElementById('sbmtBtn').click();
       }, 2000)
@@ -435,7 +464,11 @@
           _id: id
         },
         success: (res) => {
-          alert(res);
+
+          iziToast.success({
+            title: 'OK',
+            message: 'Service Deleted Successfully !',
+          });
           setTimeout(() => {
             location.reload()
           }, 2000)
@@ -457,7 +490,11 @@
           status: status
         },
         success: (res) => {
-          alert(res);
+          // alert(res);
+          iziToast.success({
+            title: 'OK',
+            message: 'Service Edited Successfully !',
+          });
           setTimeout(() => {
             location.reload()
           }, 2000)
@@ -481,7 +518,10 @@
           status: status
         },
         success: (res) => {
-          alert(res);
+          iziToast.success({
+            title: 'OK',
+            message: 'Service Edited Successfully !',
+          });
           setTimeout(() => {
             location.reload()
           }, 2000)

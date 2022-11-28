@@ -20,6 +20,15 @@
   <!-- CSS Files -->
   <link id="pagestyle" href="css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
 
+  <!-- alert cdn -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <script>
+    function preventBack() { window.history.forward(); }
+    setTimeout("preventBack()", 0);
+    window.onunload = function () { null };
+</script>
+
 </head>
 
 <body class="g-sidenav-show   bg-gray-100">
@@ -448,7 +457,7 @@
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="js/argon-dashboard.min.js?v=2.0.4"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
   <script>
@@ -458,10 +467,16 @@
       let amount = document.getElementById('amountInp').value;
 
       if (!title || !amount) {
-        alert('please Fill all the field')
+        iziToast.warning({
+          title: 'ERROR',
+          message: 'Please Fill all the field !',
+        });
         return;
       }
-      alert('ok')
+      iziToast.success({
+        title: 'OK',
+        message: 'Record Added Successfully !',
+      });
       setTimeout(() => {
         document.getElementById('sbmtBtn').click();
       }, 2000)

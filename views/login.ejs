@@ -19,6 +19,10 @@
   <link href="css/nucleo-svg.css" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" href="css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
+
+  <!-- alert cdn -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 </head>
 
 <body class="">
@@ -34,23 +38,23 @@
                   <p class="mb-0">Enter your email and password to <br> sign in</p>
                 </div>
                 <div class="card-body">
-                  <form role="form" method="get" action="/admin">
+                  <form role="form" method="post" action="/login">
                     <div class="mb-3">
-                      <input type="email" class="form-control form-control-lg" placeholder="Email" aria-label="Email" required>
+                      <input type="text" class="form-control form-control-lg" placeholder="Username" aria-label="Username" id="username" name="username" required>
                     </div>
                     <div class="mb-3">
-                      <input type="password" class="form-control form-control-lg" placeholder="Password" aria-label="Password" required>
+                      <input type="password" class="form-control form-control-lg" id="password" placeholder="Password" aria-label="Password" name="password" required>
                     </div>
-                    
+
                     <div class="text-center">
-                      <button type="submit" class="btn btn-lg btn-primary btn-lg w-100 mt-4 mb-0">Sign in</button>
+                      <button type="button" onclick="loginFun()" class="btn btn-lg btn-primary btn-lg w-100 mt-4 mb-0">Sign in</button>
                     </div>
                   </form>
                 </div>
                 <div class="card-footer text-center pt-0 px-lg-2 px-1">
                   <p class="mb-4 text-sm mx-auto">
-                    
-                    <a href="/forgot" class="text-primary text-gradient font-weight-bold">Forgot  Password ?</a>
+
+                    <a href="/forgot" class="text-primary text-gradient font-weight-bold">Forgot Password ?</a>
                   </p>
                   <a href="/" class="text-primary text-gradient font-weight-bold">Go to Home</a>
                 </div>
@@ -87,6 +91,61 @@
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/argon-dashboard.min.js?v=2.0.4"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+
+
+  <script>
+    function loginFun() {
+      let username = document.getElementById('username').value;
+      let password = document.getElementById('password').value;
+
+      if (!username || !password) {
+        alert('Please Enter Username and Password')
+        iziToast.warning({
+          title: 'OK',
+          message: 'Service Edited Successfully !',
+        });
+        return;
+      } else {
+        $.ajax({
+          url: "/login",
+          method: "POST",
+          data: {
+            username: username,
+            password: password
+          },
+          success: (res) => {
+            if (res == 'invalid Username') {
+              iziToast.warning({
+                title: 'ERROR',
+                message: 'Please Enter Valid Username !',
+              });
+              $("form").trigger("reset");
+            } else if (res == 'invalid Password') {
+              iziToast.warning({
+                title: 'ERROR',
+                message: 'Please Enter Valid Password !',
+              });
+              $("#password").val('');
+            } else if (res == 'validUser') {
+              top.location.href = '/admin';
+              iziToast.success({
+                title: 'OK',
+                message: 'Login Successfully !',
+              });
+            }
+          }
+        })
+      }
+
+    }
+  </script>
+
 </body>
 
 </html>

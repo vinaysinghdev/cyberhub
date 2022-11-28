@@ -19,6 +19,11 @@
   <link href="css/nucleo-svg.css" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" href="css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
+    <!-- alert cdn -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+
 </head>
 
 <body class="">
@@ -36,10 +41,10 @@
                 <div class="card-body">
                   <form role="form">
                     <div class="mb-3">
-                      <input type="email" class="form-control form-control-lg" placeholder="Email" aria-label="Email">
+                      <input type="email" class="form-control form-control-lg" placeholder="Email" id="usermail" aria-label="Email">
                     </div>
                     <div class="text-center">
-                      <button type="button" class="btn btn-lg btn-primary btn-lg w-100 mt-4 mb-0">Submit</button>
+                      <button type="button" onclick="sendLink()" class="btn btn-lg btn-primary btn-lg w-100 mt-4 mb-0">Submit</button>
                     </div>
                   </form>
                 </div>
@@ -82,6 +87,49 @@
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/argon-dashboard.min.js?v=2.0.4"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+    function sendLink() {
+      let usermail = document.getElementById('usermail').value;
+      if (!usermail) {
+        iziToast.warning({
+          title: 'ERROR',
+          message: 'Please Fill all the Field !',
+        });
+        return;
+      } else {
+        $.ajax({
+          url: "/sendlink",
+          method: "POST",
+          data: {
+            email: usermail
+          },
+          success: (res) => {
+            if (res == "invalid") {
+              iziToast.warning({
+                title: 'ERROR',
+                message: 'Please Enter Valid Mail !',
+              });
+            } else if (res == "valid") {
+              iziToast.success({
+                title: 'OK',
+                message: 'Reset Link Sent to Your Mail !',
+              });
+            }
+          }
+        })
+      }
+
+    }
+  </script>
+
+
+
 </body>
 
 </html>

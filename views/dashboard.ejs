@@ -20,6 +20,16 @@
   <!-- CSS Files -->
   <link id="pagestyle" href="css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
 
+  <script>
+    function preventBack() {
+      window.history.forward();
+    }
+    setTimeout("preventBack()", 0);
+    window.onunload = function() {
+      null
+    };
+  </script>
+
 
 </head>
 
@@ -54,7 +64,7 @@
             <span class="nav-link-text ms-1">Customer Enquiry</span>
           </a>
         </li>
-        
+
         <li class="nav-item">
           <a class="nav-link " href="/manageservices">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
@@ -71,7 +81,7 @@
             <span class="nav-link-text ms-1">Manage Transactions</span>
           </a>
         </li>
-        
+
         <!-- <li class="nav-item mt-3">
           <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6"> Manage Account </h6>
         </li> -->
@@ -174,7 +184,7 @@
                 </a>
               </a>
             </li>
-            
+
           </ul>
         </div>
       </div>

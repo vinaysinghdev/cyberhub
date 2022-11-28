@@ -26,7 +26,11 @@
   <script src="js/pagination.js"></script>
   <link href="css/pagination.css" rel="stylesheet" />
 
-
+  <script>
+    function preventBack() { window.history.forward(); }
+    setTimeout("preventBack()", 0);
+    window.onunload = function () { null };
+</script>
 
 </head>
 

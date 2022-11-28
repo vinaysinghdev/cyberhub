@@ -31,24 +31,24 @@
             <p class="mb-4">Diam dolor diam ipsum et tempor sit. Aliqu diam amet diam et eos labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit clita duo justo eirmod magna dolore erat amet</p>
             <div class="row g-4 mb-4">
                 <div class="col-6 col-md-6 wow fadeIn" data-wow-delay="0.5s">
-                    <div class="d-flex">
-                        <i class="fa fa-cogs fa-2x text-primary-gradient flex-shrink-0 mt-1"></i>
-                        <div class="ms-3">
-                            <h2 class="mb-0" data-toggle="counter-up">1234</h2>
-                            <p class="text-primary-gradient mb-0">Services</p>
-                        </div>
+                  <div class="d-flex">
+                    <i class="fa fa-cogs fa-2x text-primary-gradient flex-shrink-0 mt-1"></i>
+                    <div class="ms-3">
+                      <h2 class="mb-0"><span data-toggle="counter-up"><%=serviceCount%></span> + </h2>
+                      <p class="text-primary-gradient mb-0">Services</p>
                     </div>
+                  </div>
                 </div>
                 <div class="col-6 col-md-6 wow fadeIn" data-wow-delay="0.7s">
-                    <div class="d-flex">
-                        <i class="fa fa-comments fa-2x text-secondary-gradient flex-shrink-0 mt-1"></i>
-                        <div class="ms-3">
-                            <h2 class="mb-0" data-toggle="counter-up">1234</h2>
-                            <p class="text-secondary-gradient mb-0">Happy Customer</p>
-                        </div>
+                  <div class="d-flex">
+                    <i class="fa fa-comments fa-2x text-secondary-gradient flex-shrink-0 mt-1"></i>
+                    <div class="ms-3">
+                      <h2 class="mb-0"><span data-toggle="counter-up">1274</span> + </h2>
+                      <p class="text-secondary-gradient mb-0">Happy Customer</p>
                     </div>
+                  </div>
                 </div>
-            </div>
+              </div>
             <a href="/service" class="btn btn-primary-gradient py-sm-3 px-4 px-sm-5 rounded-pill mt-3">Visit Services</a>
         </div>
         <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
@@ -73,7 +73,7 @@
         <div class="row justify-content-center">
             <div class="col-lg-9">
                 <div class="wow fadeInUp" data-wow-delay="0.3s">
-                    <form>
+                    <form action="/enqform" method="post">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <div class="form-floating">
@@ -100,7 +100,7 @@
                                 </div>
                             </div>
                             <div class="col-12 text-center">
-                                <button class="btn btn-primary-gradient rounded-pill py-3 px-5" type="submit" onclick="submitEnq()">Send Message</button>
+                                <button class="btn btn-primary-gradient rounded-pill py-3 px-5" type="button" onclick="submitEnq()">Send Message</button>
                             </div>
                         </div>
                     </form>
@@ -143,7 +143,6 @@
                 message: 'Successfully inserted record!',
               });
               $("form").trigger("reset");
-      
             },
           });
         }

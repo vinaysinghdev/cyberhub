@@ -8,9 +8,6 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const multer = require("multer");
 const moment = require("moment");
-const IP = require("ip");
-const reqIp = require("request-ip");
-const axios = require("axios");
 
 dotenv.config({ path: "./.env" });
 route.use(cookieParser());
@@ -26,11 +23,14 @@ route.use(
 );
 
 // custom modules
-const homeServices = require("../models/homeServices");
+
 const custEnquiry = require("../models/custEnquiry");
 const allServices = require("../models/allServices");
 const custIp = require("../models/ipCount");
 const passBook = require("../models/passbook");
+const adminData = require("../models/adminData");
+const isLogin = require("../middleware/isLogin");
+const isLogout = require("../middleware/isLogout");
 
 route.get("/", async (req, res) => {
   try {
@@ -93,7 +93,8 @@ route.get("/service", async (req, res) => {
 
 route.get("/about", async (req, res) => {
   try {
-    res.render("about");
+    let serviceCount = await allServices.count();
+    res.render("about", { serviceCount, serviceCount });
   } catch (err) {
     console.log(err);
   }
@@ -101,21 +102,22 @@ route.get("/about", async (req, res) => {
 
 route.get("/contact", async (req, res) => {
   try {
-    res.render("contact");
+    let serviceCount = await allServices.count();
+    res.render("contact", { serviceCount: serviceCount });
   } catch (err) {
     console.log(err);
   }
 });
 
-route.get("/test", (req, res) => {
-  try {
-    res.render("test");
-  } catch (err) {
-    console.log(err);
-  }
-});
+// route.get("/test", (req, res) => {
+//   try {
+//     res.render("test");
+//   } catch (err) {
+//     console.log(err);
+//   }
+// });
 
-route.get("/login", (req, res) => {
+route.get("/login", isLogout, (req, res) => {
   try {
     res.render("login");
   } catch (err) {
@@ -139,7 +141,7 @@ route.get("/reset", (req, res) => {
   }
 });
 
-route.get("/profile", (req, res) => {
+route.get("/profile", isLogin, async (req, res) => {
   try {
     res.render("profile");
   } catch (err) {
@@ -147,7 +149,7 @@ route.get("/profile", (req, res) => {
   }
 });
 
-route.get("/admin", async (req, res) => {
+route.get("/admin", isLogin, async (req, res) => {
   try {
     let totalEnq = await custEnquiry.count();
     let totalService = await allServices.count();
@@ -227,7 +229,7 @@ route.get("/admin", async (req, res) => {
   }
 });
 
-route.get("/manageservices", async (req, res) => {
+route.get("/manageservices", isLogin, async (req, res) => {
   try {
     let perPage = 5;
     let total = await allServices.count();
@@ -249,7 +251,7 @@ route.get("/manageservices", async (req, res) => {
   }
 });
 
-route.get("/cusEnquiry", async (req, res) => {
+route.get("/cusEnquiry", isLogin, async (req, res) => {
   try {
     let perPage = 6;
     let total = await custEnquiry.count();
@@ -283,7 +285,7 @@ route.post("/updateEnq", async (req, res) => {
   }
 });
 
-route.get("/managetransaction", async (req, res) => {
+route.get("/managetransaction", isLogin, async (req, res) => {
   try {
     let month = moment().month();
     let cMonth = month + 1;
@@ -383,7 +385,6 @@ const upload = multer({
   },
 });
 
-//route that handles new post
 route.post("/addservices", upload.single("serviceImg"), async (req, res) => {
   try {
     let title = req.body.title;
@@ -462,14 +463,13 @@ route.post("/editservicehighlight", async (req, res) => {
 
 route.post("/saveip", async (req, res) => {
   try {
-
     let ip = req.body.ip;
     let ipData = JSON.parse(req.body.ipData);
 
     let checkIp = await custIp.findOne({ ip });
     let cDate = moment();
     console.log(ip);
-    console.log(ipData);
+    // console.log(ipData);
 
     if (checkIp) {
       let findIp = await custIp.findOne({ ip }).sort({ _id: -1 }).limit(1);
@@ -478,14 +478,14 @@ route.post("/saveip", async (req, res) => {
       if (diff > 59) {
         await custIp.insertMany({ ip, date: cDate, ipData });
         console.log("New Added");
-        res.send('New Added');
+        res.send("New Added");
       } else {
         console.log("already added");
-        res.send('already added')
+        res.send("already added");
       }
     } else {
       await custIp.insertMany({ ip, date: cDate, ipData });
-      res.send('New Added')
+      res.send("New Added");
     }
   } catch (err) {
     console.log(err);
@@ -503,6 +503,62 @@ route.post("/addPassbook", async (req, res) => {
     res.redirect("/managetransaction");
   } catch (err) {
     console.log(err);
+  }
+});
+
+// route.post("/addData", async (req, res) => {
+//   let name = "Sudhir Kumar";
+//   let mobile = "8076870849";
+//   let username = "cyberhub@admin";
+//   let email = "sudhiru315@example.com";
+
+//   bcrypt.hash(password, 10, async (err, hash) => {
+//       let check = await adminData.insertMany({name,mobile,username,email,password:hash})
+//   });
+// });
+
+route.post("/login", async (req, res) => {
+  try {
+    let username = req.body.username;
+    let password = req.body.password;
+
+    // console.log(username,password);
+
+    const checkUser = await adminData.findOne({ username });
+
+    if (checkUser) {
+      const checkPass = await bcrypt.compare(password, checkUser.password);
+      if (checkPass) {
+        req.session.user_id = checkUser.username;
+        console.log(req.session);
+        res.send("validUser");
+      } else {
+        res.send("invalid Password");
+      }
+    } else {
+      res.send("invalid Username");
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+route.get("/logout", isLogin, (req, res) => {
+  try {
+    req.session.destroy();
+    res.redirect("/login");
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+route.post("/sendlink", async (req, res) => {
+  let email = req.body.email;
+  let checkMail = await adminData.findOne({ email });
+  if (checkMail) {
+    res.send("valid");
+  } else {
+    res.send("invalid");
   }
 });
 
