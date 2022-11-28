@@ -488,12 +488,12 @@ route.post("/saveip", async (req, res) => {
         } else {
           await custIp.insertMany({ ip, date: cDate,ipData });
         }
+
+        res.send(ip);
       })
       .catch((error) => {
         console.log(error);
       });
-
-    // res.send(ip);
   } catch (err) {
     console.log(err);
   }
