@@ -466,20 +466,20 @@ route.post("/saveip", async (req, res) => {
   try {
     let ip = req.body.ip;
     let ipData = JSON.parse(req.body.ipData);
-    let time = moment().format("hh:mm:ss");
+    let time = moment().format("HH:mm");
 
 
     let checkIp = await custIp.findOne({ ip });
     let cDate = moment();
     console.log(ip);
-    // console.log(ipData);
+    
 
     if (checkIp) {
       let findIp = await custIp.findOne({ ip }).sort({ _id: -1 }).limit(1);
       let exDate = findIp.date;
       let diff = cDate.diff(exDate, "minutes");
       if (diff > 59) {
-        await custIp.insertMany({ ip, date: cDate, ipData, time });
+        await custIp.insertMany({ ip, date: cDate, ipData, time});
         console.log("New Added");
         res.send("New Added");
       } else {
@@ -487,7 +487,7 @@ route.post("/saveip", async (req, res) => {
         res.send("already added");
       }
     } else {
-      await custIp.insertMany({ ip, date: cDate, ipData , time });
+      await custIp.insertMany({ ip, date: cDate, ipData, time });
       res.send("New Added");
     }
   } catch (err) {
